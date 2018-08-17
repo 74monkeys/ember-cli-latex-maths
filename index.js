@@ -10,7 +10,7 @@ module.exports = {
   included: function(app) {
     this._super.included(app);
 
-    var libPath = path.join(app.bowerDirectory, 'KaTeX', 'dist');
+    var libPath = path.join(app.bowerDirectory, 'katex', 'dist');
     var fontPath = path.join(libPath, 'fonts');
 
     app.import(path.join(libPath, 'katex.min.css'));
