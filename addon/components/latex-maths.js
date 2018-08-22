@@ -1,43 +1,33 @@
-import Ember from 'ember';
-
-const {
-  Component,
-  on,
-  observer,
-  get,
-  run: { once }
-} = Ember;
+import Component from '@ember/component';
+import { get, computed } from '@ember/object';
 
 export default Component.extend({
   tagName: 'span',
   classNames: 'latex-maths',
+  attributeBindings: ['maths:data-maths'],
 
   expr: null,
   display: false,
   throwOnError: true,
-  errorColor: "#cc0000",
+  errorColor: '#cc0000',
 
-  _initialTypeset: on('didInsertElement', function() {
-    this.typeset();
+  maths: computed('expr', 'display', 'throwOnError', 'errorColor', {
+    get() {
+      const expr = get(this, 'expr');
+      const el = get(this, 'element');
+      const displayMode = get(this, 'display');
+      const throwOnError = get(this, 'throwOnError');
+      const errorColor = get(this, 'errorColor');
+
+      if (expr && el) {
+        window.katex.render(expr, el, {
+          displayMode,
+          throwOnError,
+          errorColor,
+        });
+      }
+
+      return expr;
+    },
   }),
-
-  _observer: observer('expr', 'display', 'throwOnError', 'errorColor', function() {
-    once(this, 'typeset');
-  }),
-
-  typeset() {
-    const expr = get(this, 'expr');
-    const el = get(this, 'element');
-    const display = get(this, 'display');
-    const throwOnError = get(this, 'throwOnError');
-    const errorColor = get(this, 'errorColor');
-
-    if (expr && el) {
-      window.katex.render(expr, el, {
-        displayMode: display,
-        throwOnError: throwOnError,
-        errorColor: errorColor,
-      });
-    }
-  }
 });
